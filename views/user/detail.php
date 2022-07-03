@@ -1,131 +1,94 @@
-<?php include("layouts/header.php"); ?>
+<?php
+
+
+
+include("layouts/header.php");
+include("../../database/database.php");
+include("helpers.php");
+
+if (!$_SESSION['is_login']) {
+    header("location: ../auth/login.php");
+}
+
+
+$db = new database();
+$id = $_GET['id'];
+$prd = mysqli_fetch_assoc($db->select("produk", "*", "id = '$id'"));
+
+$kode_barang = $prd['p_bp_kode'];
+$products = $db->select_limit("produk", "*", 0, 4, false, "p_bp_kode = '$kode_barang'");
+$brand = mysqli_fetch_assoc($db->select("brand", "*", "bp_kode = '$kode_barang'"))['bp_name'];
+
+$images = "../../images/";
+?>
+
 
 <!-- Product section-->
 <section class="py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
-            <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." /></div>
+            <div class="col-md-6 text-center " style="height: 300px;"><img class="img-fluid mb-5 mb-md-0" src="<?php echo $images . $prd['p_photo'] ?>" alt="..." style="height: 300px;"/></div>
             <div class="col-md-6">
-                <div class="small mb-1">SKU: BST-498</div>
-                <h1 class="display-5 fw-bolder">Shop item template</h1>
-                <div class="fs-5 mb-5">
-                    <span class="text-decoration-line-through">$45.00</span>
-                    <span>$40.00</span>
+
+                <h1 class="display-5 fw-bolder"><?= $prd['p_nama'] ?></h1>
+                <div class="fs-5 mb-3">
+                    <?php 
+                    $promo = $db->cek_promo($id);
+                    if ($promo != 0) {
+                        $price = $prd['p_harga'] - $promo;
+                        echo '<span class="text-decoration-line-through">' . rupiah($prd['p_harga']) . '</span><br>';
+                        echo '<span>' . rupiah($price) . '</span>';
+                    } else {
+                        $price = $prd['p_harga'];
+                        echo '<span>' . rupiah($price) . '</span>';
+                    } ?>
                 </div>
-                <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
+                <p class="lead"><?= $prd['p_deskripsi'] ?></p>
+                <span class="lead">Stok : <?= $prd['p_stok']?></span>
                 <div class="d-flex">
-                    <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                    <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                        <i class="bi-cart-fill me-1"></i>
-                        Add to cart
-                    </button>
+                    <form class="row g-3 mt-2" action="proses_keranjang.php" method="POST">
+                    <input type="num" value="<?= $price ?>" name="p_harga" hidden/>
+                    <input type="num" value="<?= $id ?>" name="id" hidden/>
+                    <input type="text" value="<?= $prd['p_nama'] ?>" name="p_nama" hidden/>
+                    <input type="text" value="<?= $brand ?>" name="p_brand" hidden/>
+
+                        <div class="col-auto">
+                        <input type="number" name="p_qty" class="form-control" value="1" min="1" max="<?=$prd['p_stok']?>" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" name="kp_submit" class="btn btn-dark mb-3"> <i class="bi-cart-fill me-1"></i>
+                                Tambah ke keranjang
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+
 <!-- Related items section-->
 <section class="py-5 bg-light">
     <div class="container px-4 px-lg-5 mt-5">
-        <h2 class="fw-bolder mb-4">Related products</h2>
+        <h2 class="fw-bolder mb-4">Produk lainnya</h2>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">Fancy Product</h5>
-                            <!-- Product price-->
-                            $40.00 - $80.00
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Sale badge-->
-                    <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                    <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">Special Item</h5>
-                            <!-- Product reviews-->
-                            <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                            </div>
-                            <!-- Product price-->
-                            <span class="text-muted text-decoration-line-through">$20.00</span> $18.00
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Sale badge-->
-                    <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                    <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">Sale Item</h5>
-                            <!-- Product price-->
-                            <span class="text-muted text-decoration-line-through">$50.00</span> $25.00
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">Popular Item</h5>
-                            <!-- Product reviews-->
-                            <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                            </div>
-                            <!-- Product price-->
-                            $40.00
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
-                    </div>
-                </div>
-            </div>
+            <?php
+            while ($product = mysqli_fetch_assoc($products)) {
+                $images .= $product['p_photo'];
+                $promo = $db->cek_promo($product['id']);
+                if ($promo != 0) {
+                    $price = $product['p_harga'] - $promo;
+                    show_products_discount($product['p_nama'], $product['p_harga'], $price, $product['id'], $images);
+                } else {
+                    show_products($product['p_nama'], $product['p_harga'], $product['id'], $images);
+                }
+                $images = "../../images/";
+
+            }
+            ?>
         </div>
+
     </div>
 </section>
 <?php include("layouts/footer.php"); ?>

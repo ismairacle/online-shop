@@ -1,105 +1,64 @@
-<?php 
-session_start();
-include("layouts/header.php"); ?>
+<?php
+
+
+include("layouts/header.php");
+include("../../database/database.php");
+require("helpers.php");
+
+if (!$_SESSION['is_login']) {
+    header("location: ../auth/login.php");
+}
+$db = new database();
+$products = $db->select_limit("produk", "*", 0, 4, true);
+
+
+?>
 
 <!-- Header-->
 <header class="bg-white py-5">
     <div class="container px-4 pt-5 px-lg-5 my-5">
         <div class="text-center text-dark">
-            <h1 class="display-4 fw-bolder"><?php echo $_SESSION['message'] . $_SESSION['cus_name'] ?></h1>
+            <h1 class="display-4 fw-bolder">Selamat Datang <?php echo $_SESSION['gender'] . ' ' . $_SESSION['cus_name'] ?></h1>
             <p class="lead fw-normal text-dark-50 mb-0">Website ini dibuat untuk memenuhi tugas Mata Kuliah Pemrograman Web 2</p>
-        </div>  
+            <div class="row justify-content-center">
+                <div class="col-6 text-center">
+                    <form action="cari.php" method="post">
+                        <div class="input-group mt-5">
+                            <input type="text" class="form-control" placeholder="Masukan Nama barang" name="query">
+                            <button type="submit" class="input-group-text" id="basic-addon2">Cari</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
+
 <!-- Section-->
 <section class="py-3 mt-5 bg-light">
     <div class="container  px-4 px-lg-5 mt-5">
-    <h3 class="text-center mb-5">Rekomendasi Produk</h3>
+        <h3 class="text-center mb-5">Produk Terbaru</h3>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5 ">
-                <div class="card h-100" style="max-height: 350px;">
-                    <!-- Product image-->
-                    <div class="h-50 " style="max-height: 150px;">
-                    <img class=" card-img " src="https://i.gadgets360cdn.com/products/small/oneplus-tv-y-series-32-db-240x180-1593700177.jpg" alt="... " />
-                    </div><!-- Product details-->
-                    <div class="card-body p-4 ">
-                        <div class="text-center ">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder ">Redmi OnePlus</h5>
-                            <!-- Product price-->
-                            Rp.10.000.000
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent ">
-                        <div class="text-center "><a class="btn btn-outline-dark  mt-auto " href="detail.php">Lihat Produk</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col mb-5 ">
-                <div class="card h-100 " style="max-height: 350px;">
-                    <!-- Sale badge-->
-                    <div class="badge bg-warning text-white position-absolute " style="top: 0.5rem; right: 0.5rem ">Diskon</div>
-                    <!-- Product image-->
-                    <img class="card-img-top " src="https://i.gadgets360cdn.com/products/small/oneplus-tv-y-series-32-db-240x180-1593700177.jpg" alt="... " />
-                    <!-- Product details-->
-                    <div class="card-body p-4 ">
-                        <div class="text-center ">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder ">Redmi Note 11 Pro</h5>
-                            <!-- Product price-->
-                            <span class="text-muted text-decoration-line-through ">Rp.3.900.000</span> Rp.4.000.000
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent ">
-                        <div class="text-center "><a class="btn btn-outline-dark  mt-auto " href="detail.php">Lihat Produk</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col mb-5 ">
-                <div class="card h-100" style="max-height: 350px;">
-                    <!-- Product image-->
-                    <div class="h-50 " style="max-height: 150px;">
-                    <img class=" card-img " src="https://i.gadgets360cdn.com/products/small/oneplus-tv-y-series-32-db-240x180-1593700177.jpg" alt="... " />
-                    </div><!-- Product details-->
-                    <div class="card-body p-4 ">
-                        <div class="text-center ">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder ">Redmi OnePlus</h5>
-                            <!-- Product price-->
-                            Rp.10.000.000
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent ">
-                        <div class="text-center "><a class="btn btn-outline-dark  mt-auto " href="detail.php">Lihat Produk</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col mb-5 ">
-                <div class="card h-100 " style="max-height: 350px;">
-                    <!-- Sale badge-->
-                    <div class="badge bg-warning text-white position-absolute " style="top: 0.5rem; right: 0.5rem ">Diskon</div>
-                    <!-- Product image-->
-                    <img class="card-img-top " src="https://i.gadgets360cdn.com/products/small/oneplus-tv-y-series-32-db-240x180-1593700177.jpg" alt="... " />
-                    <!-- Product details-->
-                    <div class="card-body p-4 ">
-                        <div class="text-center ">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder ">Redmi Note 11 Pro</h5>
-                            <!-- Product price-->
-                            <span class="text-muted text-decoration-line-through ">Rp.3.900.000</span> Rp.4.000.000
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent ">
-                        <div class="text-center "><a class="btn btn-outline-dark  mt-auto " href="detail.php">Lihat Produk</a></div>
-                    </div>
-                </div>
-            </div>
-            
+
+            <?php
+
+            $images = "../../images/";
+            while ($product = mysqli_fetch_assoc($products)) {
+                $promo = $db->cek_promo($product['id']);
+                $images .= $product['p_photo'];
+                if ($promo != 0) {
+                    $price = $product['p_harga'] - $promo;
+                    show_products_discount($product['p_nama'], $product['p_harga'], $price, $product['id'], $images);
+                } else {
+                    show_products($product['p_nama'], $product['p_harga'], $product['id'], $images);
+                }
+
+                $images = "../../images/";
+
+            }
+            ?>
 
         </div>
+
 </section>
 <?php include("layouts/footer.php"); ?>

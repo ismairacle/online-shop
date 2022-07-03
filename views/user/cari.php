@@ -6,9 +6,8 @@ include("../../database/database.php");
 include("../../database/pagination.php");
 $db = new database();
 $pg = new pagination();
-$products = $pg->paginate_table("produk", 8);
 
-
+$products = $db->search_product($_POST['query']);
 
 
 ?>
@@ -17,7 +16,7 @@ $products = $pg->paginate_table("produk", 8);
 <!-- Section-->
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
-        <h2 class="fw-bolder mb-4">Daftar Produk</h2>
+        <h2 class="fw-bolder mb-4">Hasil Pencarian</h2>
         <p class="fw-normal text-dark-50 mb-5">Dapatkan barang-barang elektronik pilihan dengan harga terbaik hanya untuk anda</p>
 
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">

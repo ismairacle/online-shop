@@ -10,24 +10,35 @@ $data = array();
 if (isset($_GET['aksi'])) {
     session_start();
     if ($_GET['aksi'] == 'login') {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-        $db->select("customer", "*", "cus_username = '$username'");
-        $result = $db->sql;
-        $fetched = mysqli_fetch_assoc($result);
+        if ($_POST['username'] == 'admin' && $_POST['password'] == 'admin1234') {
+            $_SESSION['role'] = 'admin';
+            header("location: ../admin/index.php");
+        } else {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $result = $db->select("customer", "*", "cus_username = '$username'");
+            $fetched = mysqli_fetch_assoc($result);
 
-        if ($fetched['cus_username'] == $username && $fetched['cus_password'] == $password) {
-            if ($fetched['cus_gender'] == 'L') {
-                $_SESSION['message'] = 'Selamat datang Bapak';
+            if ($fetched['cus_username'] == $username && $fetched['cus_password'] == $password) {
+                if ($fetched['cus_gender'] == 'L') {
+                    $_SESSION['gender'] = 'Bapak';
+                } elseif ($fetched['cus_gender'] == 'P') {
+                    $_SESSION['gender'] = 'Ibu';
+                }
+                $_SESSION['cus_name'] = $fetched['cus_name'];
+                $_SESSION['user_id'] = $fetched['id'];
+                $_SESSION['is_login'] = true;
+                $_SESSION['role'] = 'customer';
+                header("location: ../user/index.php");
             } else {
-                $_SESSION['message'] = 'Selamat datang Ibu';
+                $_SESSION['message'] = 'Password dan Username yang anda masukan tidak valid';
+                header("location: ../notification/failed.php");
             }
-            $_SESSION['cus_name'] = $fetched['cus_name'];
-            
-            header("location: ../user/index.php");
         }
-    } else {
-
+    } elseif ($_GET['aksi'] == 'logout') {
+        session_destroy();
+        header("location: ../user/index.php");
+    } elseif ($_GET['aksi'] == 'register') {
         if ($_POST['password1'] === $_POST['password2']) {
             // $hashed_password = password_hash($_POST['password1'], PASSWORD_DEFAULT);
             $data = [
@@ -42,11 +53,12 @@ if (isset($_GET['aksi'])) {
             ];
 
             $_SESSION['message'] = 'Registrasi Berhasil';
-            header("location: notification.php");
+            header("location: ../notification/success.php");
 
             $db->insert('customer', $data);
         } else {
-            return $_SESSION['message'] = 'Password tidak sama';
+            $_SESSION['message'] = 'Password tidak sama';
+            header("location: ../notification/failed.php");
         }
     }
 }
