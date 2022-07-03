@@ -1,6 +1,7 @@
 <?php include("layouts/header.php"); ?>
 <?php include("../../database/database.php");
 include("../../database/pagination.php");
+include("helpers.php");
 
 
 ?>
@@ -42,7 +43,7 @@ $data_produk = $pg->paginate_table("promo", 5);
                     <tr>
                         <th scope="row"><?php echo $pg->no++ ?></th>
                         <td><?php echo $row['pr_nama']; ?></td>
-                        <td><?php echo $row['pr_potongan']; ?></td>
+                        <td><?php echo rupiah($row['pr_potongan']); ?></td>
                         <td><?php echo $row['pr_mulai']; ?></td>
                         <td><?php echo $row['pr_selesai']; ?></td>
                         <td>

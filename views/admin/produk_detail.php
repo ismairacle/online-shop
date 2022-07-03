@@ -1,83 +1,66 @@
 <?php include("layouts/header.php"); ?>
 <?php include("../../database/database.php");
-$db = new database();
+include("helpers.php");
 
+
+
+$db = new database();
+$id = $_GET['id'];
+$prd = mysqli_fetch_assoc($db->select("produk", "*", "id = '$id'"));
+
+$kode_barang = $prd['p_bp_kode'];
+$products = $db->select_limit("produk", "*", 0, 4, false, "p_bp_kode = '$kode_barang'");
+$brand = mysqli_fetch_assoc($db->select("brand", "*", "bp_kode = '$kode_barang'"))['bp_name'];
+
+$images = "../../images/";
 ?>
 
 
+<!-- Product section-->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-4 text-center " style="height: 300px;"><img class="img-fluid mb-5 mb-md-0" src="<?php echo $images . $prd['p_photo'] ?>" alt="..." style="height: 300px;" /></div>
+            <div class="col-md-8 ">
 
-<div class="containter p-5">
+                <h1 class="display-5 fw-bolder"><?= $prd['p_nama'] ?></h1>
+                <div class="fs-5 mb-3">
+                    <form>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Harga</label>
+                            <div class="col-sm-8">
+                                <input type="text" readonly class="form-control-plaintext" id="" value="<?php echo rupiah($prd['p_harga']) ?>" disabled>
+                            </div>
+                        </div>
 
-    <div class="row g-5 px-md-5 justify-content-center">
-        <div class="col-md-5 col-lg-5">
-            <form class="needs-validation" method="POST" action="../../database/operation/insert.php">
-                <h4 class="mb-3">Tambah Produk</h4>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Deskripsi</label>
+                            <div class="col-sm-8">
+                            <textarea class="form-control" readonly id="p_deskripsi" rows="3"  disabled><?php echo $prd['p_deskripsi'] ?></textarea>
+                            </div>
+                        </div>
 
-                <div class="row g-3 mb-3">
-                    <!-- <div class="col-sm-12">
-                        <label for="p_kode" class="form-label">Kode Produk</label>
-                        <input type="text" class="form-control" id="p_kode" name="p_kode" placeholder="" required>
-                    </div> -->
-                    <div class="col-sm-12">
-                        <label for="p_nama" class="form-label">Nama Produk</label>
-                        <input type="text" class="form-control" id="p_nama" name="p_nama" placeholder="" required>
-                    </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Stok</label>
+                            <div class="col-sm-8">
+                                <input type="text" readonly class="form-control-plaintext" id="" value="<?php echo $prd['p_stok'] ?>">
+                            </div>
+                        </div>
 
-                    <div class="col-sm-6">
-                        <label for="p_stok" class="form-label">Quantity</label>
-                        <input type="text" class="form-control" id="p_stok" name="p_stok" placeholder="" required>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <label for="p_harga" class="form-label">Harga</label>
-                        <input type="text" class="form-control" id="p_harga" name="p_harga" placeholder="" required>
-                    </div>
-                    <div class="col-sm-12">
-                        <label for="kp_kode" class="form-label">Kategori</label>
-                        <select class="form-select" id="kp_kode" name="kp_kode" required>
-                            <?php
-                            $result = $db->select("kategori", "*");
-                            
-                            ?>
-                            <option selected>Pilih Kategori</option>
-                            <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                                <option value="<?php echo $row['kp_kode'] ?>"><?php echo $row['kp_nama'] ?></option>
-                            <?php } ?>
-
-                        </select>
-                    </div>
-
-                    <div class="col-sm-12">
-                        <label for="bp_kode" class="form-label">Brand</label>
-                        <select class="form-select" id="kp_kode" name="bp_kode" required>
-                            <?php
-                            $result = $db->select("brand", "*");
-
-                            ?>
-                            <option selected>Pilih Brand</option>
-                            <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                                <option value="<?php echo $row['bp_kode'] ?>"><?php echo $row['bp_name'] ?></option>
-                            <?php } ?>
-
-                        </select>
-                    </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Brand</label>
+                            <div class="col-sm-8">
+                                <input type="text" readonly class="form-control-plaintext" id="" value="<?php echo $brand ?>">
+                            </div>
+                        </div>
 
 
-                    <div class="col-sm-12 mb-4">
-                        <label for="p_foto" class="form-label">Foto Produk</label>
-                        <input class="form-control" type="file" id="foto" name="p_foto">
-                    </div>
+                    </form>
                 </div>
-
-
-                <div class="col-12 mt-3 text-center">
-                    <button class="btn btn-dark px-4" type="submit" name="p_submit">Input Produk</button>
-                </div>
-
-
-            </form>
+            </div>
         </div>
-    </div>
+</section>
 
-</div>
+
+
 <?php include("layouts/footer.php"); ?>
